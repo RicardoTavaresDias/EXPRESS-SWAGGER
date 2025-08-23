@@ -25,12 +25,6 @@ Este projeto serve como um recurso educacional e um ponto de partida para desenv
 
 ## Primeiros Passos
 
-### Pré-requisitos
-
-- Node.js (versão 14.x ou superior recomendada)
-- Gerenciador de pacotes npm ou yarn
-- Git (para clonar o repositório)
-
 ### Instalação
 
 1. Clone o repositório:
@@ -63,7 +57,7 @@ Este projeto serve como um recurso educacional e um ponto de partida para desenv
 
 Depois que o servidor estiver em execução (porta padrão: 3000), você pode acessar a Swagger UI em:
 ```
-http://localhost:3000/api-docs
+http://localhost:3000/docs
 ```
 
 - Explore a documentação da API gerada automaticamente.
@@ -74,7 +68,8 @@ http://localhost:3000/api-docs
 
 Suponha que um endpoint simples `/users` esteja definido. A Swagger UI exibirá:
 
-- **GET /users**: Recupera uma lista de usuários.
+- **GET /users**: Recupera uma lista de todos os usuários.
+- **GET /users/:id**: Recupera os detalhes de um usuário específico com base no ID fornecido.
 - **POST /users**: Cria um novo usuário com um payload validado (ex.: `name: string`, `email: string`).
 
 Corpo de exemplo para POST `/users`:
@@ -91,15 +86,17 @@ Corpo de exemplo para POST `/users`:
 EXPRESS-SWAGGER/
 ├── src/
 │   ├── config/           # Arquivos de configuração (ex.: configurações de ambiente)
-│   ├── controllers/      # Controladores da API
+│   ├── controller/       # Controladores da API
+│   ├── database/         # Banco de dados memória
+│   ├── docs/             # Documentação, Swagger
+│   ├── middlewares/      # Middlewares personalizados para a aplicação
+│   ├── repositories/     # Camada de acesso a dados
 │   ├── routes/           # Definições de rotas da API
 │   ├── schemas/          # Esquemas Zod para validação
+│   ├── services/         # Camada de serviços/lógica de negócios
 │   ├── app.ts            # Configuração principal da aplicação
 │   └── server.ts         # Configuração do servidor
-├── .env                  # Variáveis de ambiente
-├── package.json          # Dependências do projeto e scripts
-├── tsconfig.json         # Configuração do TypeScript
-└── README.md             # Este arquivo
+└── .env                  # Variáveis de ambiente
 ```
 
 ## Contribuindo
@@ -117,28 +114,3 @@ Certifique-se de que seu código segue os padrões de TypeScript e linting do pr
 ## Licença
 
 Este projeto é de código aberto e está disponível sob a Licença MIT. Veja o arquivo [LICENSE](LICENSE) para detalhes.
-
-## Agradecimentos
-
-- Inspirado pela comunidade `express-zod-api` e sua integração seamless com Swagger.
-- Agradecimentos aos ecossistemas Node.js, Express.js e TypeScript por ferramentas poderosas.
-- Agradecimento especial a Ricardo Tavares Dias por iniciar este projeto.
-
-## Contato
-
-Para perguntas, sugestões ou feedback, sinta-se à vontade para abrir um issue ou entrar em contato via:
-- GitHub: [RicardoTavaresDias](https://github.com/RicardoTavaresDias)
-- E-mail: (Adicione seu e-mail de contato, se aplicável)
-
-## Melhorias Futuras
-
-- Adicionar testes unitários e de integração.
-- Expandir a documentação com mais exemplos de endpoints.
-- Suporte para bancos de dados adicionais (ex.: PostgreSQL, MongoDB).
-- Melhoria na personalização da Swagger UI.
-
-Boa codificação e aproveite construir APIs com Express e Swagger!
-
----
-
-Este `README.md` oferece um guia abrangente, detalhes técnicos e um tom profissional adequado para um repositório no GitHub. Ele assume uma estrutura típica de projeto com base na imagem fornecida anteriormente e no contexto da descrição do repositório. Ajuste os detalhes específicos (ex.: endpoints, números de porta) conforme necessário com base no código real.
