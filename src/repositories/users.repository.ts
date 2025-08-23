@@ -1,5 +1,4 @@
 import { databaseUsers } from "@/database/database.memory";
-import { randomUUID } from "node:crypto"
 import type { CreateUsersType } from "@/schemas/users.schema"
 
 export function getUsers () {
@@ -12,7 +11,7 @@ export function getByUser (id: string) {
 
 export function createUser (data: CreateUsersType) {
   const result = databaseUsers.push({ 
-    id: randomUUID(),
+    id: data.id,
     name: data.name,
     email: data.email,
     role:  data.role
