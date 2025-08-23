@@ -1,21 +1,36 @@
 import { Request, Response } from "express";
-import { randomUUID } from "node:crypto"
-import { databaseUsers } from "../database/database.memory";
+import { createUserService, getByUserService, getUsersService } from "@/services/users.services"
+import { createUserSchema, idParamsSchema } from "@/schemas/users.schema"
 
 class User {
   index (request: Request, response: Response) {
-    response.status(200).json(databaseUsers)
+    const result = getUsersService()
+
+    response.status(200).json(result)
+  }
+
+  byIndex (request: Request, response: Response) {
+    const idSchema = idParamsSchema.safeParse(request.params)
+    if(!idSchema.success) {
+      return response.status(400).json({ message: idSchema.error.issues[0].message })
+    }
+
+    const { id } = idSchema.data
+
+    const result = getByUserService(id)
+
+    response.status(200).json(result)
   }
 
   create (request: Request, response: Response) {
-    databaseUsers.push({ 
-      id: randomUUID(),
-      name: "Ricardo  Tavares",
-      email: "ricardo@email.com",
-      role:  "user"
-    })
+    const createData = createUserSchema.safeParse(request.body)
+    if(!createData.success) {
+      return response.status(400).json({ message: createData.error.issues[0].message })
+    }
 
-    response.status(201).json({ message: "Usuario criado com sucesso!" })
+    const result = createUserService(createData.data)
+
+    response.status(201).json({ message: "Usuario criado com sucesso!", data: result })
   }
 }
 

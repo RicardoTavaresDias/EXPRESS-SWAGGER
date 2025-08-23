@@ -1,0 +1,18 @@
+# Create user
+POST http://localhost:3333
+Content-Type: application/json
+
+{
+  "name": "João Silva",
+  "email": "joao@email.com"
+}
+
+###
+
+# Get users All
+GET http://localhost:3333
+
+###
+
+# Get by id user
+GET http://localhost:3333/2ee99bd4-4f82-4121-b331-300a1b5550d8
