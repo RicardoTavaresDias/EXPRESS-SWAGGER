@@ -35,101 +35,102 @@ Este projeto serve como um recurso educacional e um ponto de partida para desenv
 
 ### Instalação da biblioteca
 
-1. instale swagger jsdoc:
-   ```bash
-   npm i swagger-jsdoc swagger-ui-express
-   ````
+Instale swagger jsdoc:
+```bash
+npm i swagger-jsdoc swagger-ui-express
+````
 
-2. Instale as depedencias typescript :
+Instale as depedencias typescript :
 
-   ```bash
-   npm i @types/swagger-jsdoc @types/swagger-ui-express
-   ```
+```bash
+npm i @types/swagger-jsdoc @types/swagger-ui-express
+```
 
-3. Configuração tsconfig.json
+Configuração tsconfig.json
 
-   ```ts
-      {
-         "compilerOptions": {
-         "target": "ES2022",
-         "lib": ["ES2023"],
-         "paths": {
-            "@/*": ["./src/*"]
+```ts
+   {
+      "compilerOptions": {
+      "target": "ES2022",
+      "lib": ["ES2023"],
+      "paths": {
+         "@/*": ["./src/*"]
+      },
+      "module": "commonjs",
+      "esModuleInterop": true,
+      "forceConsistentCasingInFileNames": true,
+      "strict": true,
+      "skipLibCheck": true,
+      "resolveJsonModule": true
+   }
+```
+
+Realizar configuração swagger config na pasta src/config/swagger.config.ts:
+
+`````ts
+   import swaggerJsDoc from "swagger-jsdoc";
+   import swaggerUi from "swagger-ui-express";
+   import { Express } from "express";
+
+   const options: swaggerJsDoc.Options = {
+      definition: {
+         openapi: "3.0.0",
+         info: {
+            title: "Swagger Express",
+            version: "1.0.0",
+            description: "Documentação da API usando Swagger",
          },
-         "module": "commonjs",
-         "esModuleInterop": true,
-         "forceConsistentCasingInFileNames": true,
-         "strict": true,
-         "skipLibCheck": true,
-         "resolveJsonModule": true
-      }
-   ```
-
-4. Realizar configuração swagger config na pasta src/config/swagger.config.ts:
-
-   `````ts
-      import swaggerJsDoc from "swagger-jsdoc";
-      import swaggerUi from "swagger-ui-express";
-      import { Express } from "express";
-
-      const options: swaggerJsDoc.Options = {
-         definition: {
-            openapi: "3.0.0",
-            info: {
-               title: "Swagger Express",
-               version: "1.0.0",
-               description: "Documentação da API usando Swagger",
+         servers: [
+            {
+            url: "http://localhost:3333",
             },
-            servers: [
-               {
-               url: "http://localhost:3333",
-               },
-            ],
-            components: {
-               securitySchemes: {
-               // Token
-               bearerAuth: {
-                  type: "http",
-                  scheme: "bearer",
-                  bearerFormat: "JWT",
-               }
-               }
-            },
-            paths: {}
+         ],
+         components: {
+            securitySchemes: {
+            // Token
+            bearerAuth: {
+               type: "http",
+               scheme: "bearer",
+               bearerFormat: "JWT",
+            }
+            }
          },
-         apis: ["./src/controller/*.ts"], 
-      };
+         paths: {}
+      },
+      apis: ["./src/controller/*.ts"], 
+   };
 
-      const swaggerSpec = swaggerJsDoc(options);
+   const swaggerSpec = swaggerJsDoc(options);
 
-      export function setupSwagger(app: Express) {
-         app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-      }
+   export function setupSwagger(app: Express) {
+      app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+   }
 
-   `````
+`````
 
-5. Configurar no servidor arquivo app.ts:
+Configurar no servidor arquivo app.ts:
 
-   ```ts
-      import express from "express";
-      import cors from "cors"
-      import { router } from "./routers";
-      import { setupSwagger } from "@/config/swagger.config";
+```ts
+   import express from "express";
+   import cors from "cors"
+   import { router } from "./routers";
+   import { setupSwagger } from "@/config/swagger.config";
 
-      const app = express()
+   const app = express()
 
-      app.use(express.json())
-      app.use(cors())
-      app.use(router)
+   app.use(express.json())
+   app.use(cors())
+   app.use(router)
 
-      // Swagger
-      setupSwagger(app);
+   // Swagger
+   setupSwagger(app);
 
-      export { app }
-   ```
-6. Exemplo de definição de rota com documentação no controller:
+   export { app }
+```
 
-    ```ts
+Exemplo de definição de rota com documentação no controller:
+
+```ts
    /**
     * @swagger
     * /users:
@@ -163,7 +164,7 @@ Este projeto serve como um recurso educacional e um ponto de partida para desenv
          response.status(200).json(result)
       }
 
-   ```
+```
 
 ---
 
