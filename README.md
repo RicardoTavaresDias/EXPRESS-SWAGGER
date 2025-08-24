@@ -49,120 +49,120 @@ npm i @types/swagger-jsdoc @types/swagger-ui-express
 Configuração tsconfig.json
 
 ```ts
-   {
-      "compilerOptions": {
-      "target": "ES2022",
-      "lib": ["ES2023"],
-      "paths": {
-         "@/*": ["./src/*"]
-      },
-      "module": "commonjs",
-      "esModuleInterop": true,
-      "forceConsistentCasingInFileNames": true,
-      "strict": true,
-      "skipLibCheck": true,
-      "resolveJsonModule": true
-   }
+{
+   "compilerOptions": {
+   "target": "ES2022",
+   "lib": ["ES2023"],
+   "paths": {
+      "@/*": ["./src/*"]
+   },
+   "module": "commonjs",
+   "esModuleInterop": true,
+   "forceConsistentCasingInFileNames": true,
+   "strict": true,
+   "skipLibCheck": true,
+   "resolveJsonModule": true
+}
 ```
 
 Realizar configuração swagger config na pasta src/config/swagger.config.ts:
 
 `````ts
-   import swaggerJsDoc from "swagger-jsdoc";
-   import swaggerUi from "swagger-ui-express";
-   import { Express } from "express";
+import swaggerJsDoc from "swagger-jsdoc";
+import swaggerUi from "swagger-ui-express";
+import { Express } from "express";
 
-   const options: swaggerJsDoc.Options = {
-      definition: {
-         openapi: "3.0.0",
-         info: {
-            title: "Swagger Express",
-            version: "1.0.0",
-            description: "Documentação da API usando Swagger",
-         },
-         servers: [
-            {
-            url: "http://localhost:3333",
-            },
-         ],
-         components: {
-            securitySchemes: {
-            // Token
-            bearerAuth: {
-               type: "http",
-               scheme: "bearer",
-               bearerFormat: "JWT",
-            }
-            }
-         },
-         paths: {}
+const options: swaggerJsDoc.Options = {
+   definition: {
+      openapi: "3.0.0",
+      info: {
+         title: "Swagger Express",
+         version: "1.0.0",
+         description: "Documentação da API usando Swagger",
       },
-      apis: ["./src/controller/*.ts"], 
-   };
+      servers: [
+         {
+         url: "http://localhost:3333",
+         },
+      ],
+      components: {
+         securitySchemes: {
+         // Token
+         bearerAuth: {
+            type: "http",
+            scheme: "bearer",
+            bearerFormat: "JWT",
+         }
+         }
+      },
+      paths: {}
+   },
+   apis: ["./src/controller/*.ts"], 
+};
 
-   const swaggerSpec = swaggerJsDoc(options);
+const swaggerSpec = swaggerJsDoc(options);
 
-   export function setupSwagger(app: Express) {
-      app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-   }
+export function setupSwagger(app: Express) {
+   app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+}
 
 `````
 
 Configurar no servidor arquivo app.ts:
 
 ```ts
-   import express from "express";
-   import cors from "cors"
-   import { router } from "./routers";
-   import { setupSwagger } from "@/config/swagger.config";
+import express from "express";
+import cors from "cors"
+import { router } from "./routers";
+import { setupSwagger } from "@/config/swagger.config";
 
-   const app = express()
+const app = express()
 
-   app.use(express.json())
-   app.use(cors())
-   app.use(router)
+app.use(express.json())
+app.use(cors())
+app.use(router)
 
-   // Swagger
-   setupSwagger(app);
+// Swagger
+setupSwagger(app);
 
-   export { app }
+export { app }
 ```
 
 Exemplo de definição de rota com documentação no controller:
 
 ```ts
-   /**
-    * @swagger
-    * /users:
-    *   get:
-    *     summary: Lista todos os usuários
-    *     tags: [Users]
-    *     responses:
-    *       200:
-    *         description: Lista de usuários retornada com sucesso
-    *         content:
-    *           application/json:
-    *             schema:
-    *               type: array
-    *               items:
-    *                 type: object
-    *                 properties:
-    *                   id:
-    *                     type: string
-    *                     example: "123e4567-e89b-12d3-a456-426614174000"
-    *                   name:
-    *                     type: string
-    *                     example: "João Silva"
-    *                   email:
-    *                     type: string
-    *                     example: "joao@email.com"
-    */
+/**
+ * @swagger
+ * /users:
+ *   get:
+ *     summary: Lista todos os usuários
+ *     tags: [Users]
+ *     responses:
+ *       200:
+ *         description: Lista de usuários retornada com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                     example: "123e4567-e89b-12d3-a456-426614174000"
+ *                   name:
+ *                     type: string
+ *                     example: "João Silva"
+ *                   email:
+ *                     type: string
+ *                     example: "joao@email.com"
+ */
 
-      index (request: Request, response: Response) {
-         const result = getUsersService()
+   index (request: Request, response: Response) {
+      const result = getUsersService()
 
-         response.status(200).json(result)
-      }
+      response.status(200).json(result)
+   }
 
 ```
 
