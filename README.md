@@ -201,3 +201,37 @@ EXPRESS-SWAGGER/
 │   └── server.ts         # Inicialização do servidor
 └── .env                  # Variáveis de ambiente
 ```
+
+---
+
+## Layout moderno 
+
+É uma biblioteca que substitui o Swagger UI tradicional por uma interface muito mais moderna e bonita
+
+````bash
+npm install @scalar/express-api-reference
+````
+
+Configurar no swagger.config.ts para funcionar a lib
+
+````ts
+/*
+
+   Realiza seguinte configurações mantendo que já está, mas adicionando conforme a baixo, para a lib funcionar corretamente.
+
+*/
+
+// importar a lib
+import { apiReference } from "@scalar/express-api-reference";
+
+export function setupSwagger(app: Express) {
+  app.use("/docs", 
+   // configurar a lib
+    apiReference({
+      theme: "modern", // opções: "default", "modern", "dark"
+      spec: { content: swaggerSpec },
+    }),
+    swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+}
+
+````
