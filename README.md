@@ -50,7 +50,7 @@ Este projeto serve como um recurso educacional e um ponto de partida para desenv
 
    ```ts
       {
-      "compilerOptions": {
+         "compilerOptions": {
          "target": "ES2022",
          "lib": ["ES2023"],
          "paths": {
@@ -61,7 +61,7 @@ Este projeto serve como um recurso educacional e um ponto de partida para desenv
          "forceConsistentCasingInFileNames": true,
          "strict": true,
          "skipLibCheck": true,
-         "resolveJsonModule": true //swagger
+         "resolveJsonModule": true
       }
    ```
 
@@ -73,37 +73,39 @@ Este projeto serve como um recurso educacional e um ponto de partida para desenv
       import { Express } from "express";
 
       const options: swaggerJsDoc.Options = {
-      definition: {
-         openapi: "3.0.0",
-         info: {
-            title: "Swagger Express",
-            version: "1.0.0",
-            description: "Documentação da API usando Swagger, Express e TypeScript",
-         },
-         servers: [
-            {
-            url: "http://localhost:3333",
+         definition: {
+            openapi: "3.0.0",
+            info: {
+               title: "Swagger Express",
+               version: "1.0.0",
+               description: "Documentação da API usando Swagger",
             },
-         ],
-         components: {
-            securitySchemes: {
-            bearerAuth: {
-               type: "http",
-               scheme: "bearer",
-               bearerFormat: "JWT",
-            }
-            }
+            servers: [
+               {
+               url: "http://localhost:3333",
+               },
+            ],
+            components: {
+               securitySchemes: {
+               // Token
+               bearerAuth: {
+                  type: "http",
+                  scheme: "bearer",
+                  bearerFormat: "JWT",
+               }
+               }
+            },
+            paths: {}
          },
-         paths: {}, // aqui você pode adicionar manualmente ou gerar com JSDoc
-      },
-      apis: ["./src/controller/*.ts"], 
+         apis: ["./src/controller/*.ts"], 
       };
 
       const swaggerSpec = swaggerJsDoc(options);
 
       export function setupSwagger(app: Express) {
-      app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+         app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
       }
+
    `````
 
 5. Configurar no servidor arquivo app.ts:
@@ -199,22 +201,3 @@ EXPRESS-SWAGGER/
 │   └── server.ts         # Inicialização do servidor
 └── .env                  # Variáveis de ambiente
 ```
-
----
-
-## Contribuindo
-
-Contribuições são bem-vindas!
-
-1. Faça um fork do repositório.
-2. Crie uma branch (`git checkout -b minha-feature`).
-3. Faça suas alterações e commit (`git commit -m "Minha nova feature"`).
-4. Envie para seu fork (`git push origin minha-feature`).
-5. Abra um Pull Request.
-
----
-
-## Licença
-
-Este projeto é de código aberto e está disponível sob a [Licença MIT](LICENSE).
-
