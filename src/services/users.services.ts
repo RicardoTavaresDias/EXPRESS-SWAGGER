@@ -1,5 +1,5 @@
-import { getUsers, createUser, getByUser } from "@/repositories/users.repository";
-import type { CreateUsersType } from "@/schemas/users.schema"
+import { getUsers, createUser, getByUser, updateUser, removeUser } from "@/repositories/users.repository";
+import type { CreateUsersType, UpdateUserType } from "@/schemas/users.schema"
 
 export function getUsersService () {
   const users = getUsers()
@@ -23,4 +23,16 @@ export function createUserService (data: CreateUsersType) {
   const dataUserCreate = createUser(data)
   
   return dataUserCreate
+}
+
+export function updateUserServices (data: UpdateUserType & { id: string }) {
+  const result = updateUser(data)
+
+  return result
+}
+
+export function removeUserServices (id: string) {
+  const result = removeUser(id)
+
+  return result
 }

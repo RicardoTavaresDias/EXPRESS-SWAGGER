@@ -5,6 +5,6 @@ export type DatabaseMemory = {
   role: string
 }
 
-const databaseUsers: DatabaseMemory[] = []
+let databaseUsers: DatabaseMemory[] = []
 
 export { databaseUsers }

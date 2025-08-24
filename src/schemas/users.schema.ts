@@ -14,3 +14,12 @@ export const idParamsSchema = z.object({
 })
 
 export type idParamsType = z.infer<typeof idParamsSchema>
+
+export const updateUserSchema = z.object({
+  ...createUserSchema.omit({
+    id: true,
+    role: true
+  }).shape
+}).partial()
+
+export type UpdateUserType = z.infer<typeof updateUserSchema>

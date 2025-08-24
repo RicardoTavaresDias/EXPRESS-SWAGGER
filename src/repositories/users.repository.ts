@@ -1,5 +1,5 @@
 import { databaseUsers } from "@/database/database.memory";
-import type { CreateUsersType } from "@/schemas/users.schema"
+import type { CreateUsersType, UpdateUserType } from "@/schemas/users.schema"
 
 export function getUsers () {
   return databaseUsers
@@ -18,4 +18,25 @@ export function createUser (data: CreateUsersType) {
   })
 
   return databaseUsers[result -1]
+}
+
+export function updateUser (dataUpdate: UpdateUserType & { id: string }) {
+  const result = databaseUsers.map(user => 
+    user.id === dataUpdate.id ? { ...user, ...dataUpdate } : user
+  )
+
+  databaseUsers.length = 0
+  databaseUsers.push(...result)
+
+  const returnResult = databaseUsers.filter(user => user.id === dataUpdate.id)
+
+  return returnResult
+}
+
+export function removeUser (id: string) {
+  const result = databaseUsers.filter(remove => remove.id !== id)
+
+  databaseUsers.length = 0
+
+  databaseUsers.push(...result)
 }

@@ -1,18 +1,31 @@
 # Create user
-POST http://localhost:3333
+POST http://localhost:3333/users
 Content-Type: application/json
 
 {
-  "name": "João Silva",
+  "name": "dani",
   "email": "joao@email.com"
 }
 
 ###
 
 # Get users All
-GET http://localhost:3333
+GET http://localhost:3333/users
 
 ###
 
 # Get by id user
-GET http://localhost:3333/2ee99bd4-4f82-4121-b331-300a1b5550d8
+GET http://localhost:3333/users/f634253a-cde5-471c-b8e0-4773e28dd10c
+
+###
+
+# Path by user
+PATCH  http://localhost:3333/users/b06c61d7-5dcf-438d-9b3e-03278646bdbf
+Content-Type: application/json
+
+
+
+###
+
+# Remove by user
+DELETE  http://localhost:3333/users/35edf2eb-9df2-4849-8917-bc99012a47cd
