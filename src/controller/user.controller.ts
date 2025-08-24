@@ -3,7 +3,7 @@ import { createUserService, getByUserService, getUsersService } from "@/services
 import { createUserSchema, idParamsSchema } from "@/schemas/users.schema"
 import type { idParamsType } from "@/schemas/users.schema"
 
-class User {
+class UserController {
   index (request: Request, response: Response) {
     const result = getUsersService()
 
@@ -35,4 +35,4 @@ class User {
   }
 }
 
-export { User }
+export { UserController }

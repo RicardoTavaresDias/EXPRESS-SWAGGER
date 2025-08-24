@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { User } from "../controller/user.controller";
+import { UserController } from "../controller/user.controller";
 import { generateUserIdMiddleware } from "@/middlewares/generateUserIdMiddleware";
 
 const userRouter = Router()
-const userController = new User()
+const userController = new UserController()
 
 userRouter.get("/", userController.index)
 userRouter.get("/:id", userController.byIndex)
