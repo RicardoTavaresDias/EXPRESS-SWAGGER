@@ -2,115 +2,219 @@
 
 ## Visão Geral
 
-Bem-vindo ao projeto **EXPRESS-SWAGGER**! Este repositório apresenta uma implementação prática de documentação Swagger automática integrada a uma aplicação Express.js utilizando a biblioteca `express-zod-api`. O principal objetivo deste projeto é demonstrar como construir uma API RESTful robusta e bem documentada com TypeScript, aproveitando o Swagger para documentação interativa de APIs e o `express-zod-api` para um desenvolvimento de API simplificado com validação de esquemas.
+Bem-vindo ao projeto **EXPRESS-SWAGGER**!  
+Este repositório apresenta uma implementação prática de documentação Swagger automática integrada a uma aplicação **Express.js** utilizando a biblioteca **swagger-jsdoc**.  
 
-Este projeto serve como um recurso educacional e um ponto de partida para desenvolvedores que desejam combinar o poder do Express.js com a geração automática de documentação Swagger, garantindo que as APIs sejam funcionais e fáceis de entender para os consumidores.
+O principal objetivo deste projeto é demonstrar como construir uma API RESTful robusta e bem documentada com **TypeScript**, aproveitando o **Swagger** para documentação interativa de APIs e o **swagger-jsdoc** para geração automática da especificação OpenAPI.
+
+Este projeto serve como um recurso educacional e um ponto de partida para desenvolvedores que desejam combinar o poder do **Express.js** com a documentação Swagger, garantindo que as APIs sejam funcionais, validadas e fáceis de entender.
+
+---
 
 ## Recursos
 
-- **Documentação Swagger Automática**: Gera especificações Swagger (OpenAPI) dinamicamente usando `express-zod-api`.
+- **Documentação Swagger Automática**: Gera especificações Swagger (OpenAPI) dinamicamente usando `swagger-jsdoc`.
 - **Suporte a TypeScript**: Garante segurança de tipos e melhora a experiência do desenvolvedor.
-- **Validação de Esquemas**: Utiliza Zod para validação de entrada, integrado seamlessly aos endpoints da API.
-- **Integração com Express.js**: Constrói-se sobre o framework leve e flexível Express.
-- **Documentação Interativa da API**: Oferece uma interface Swagger UI amigável para teste e exploração de endpoints.
+- **Integração com Express.js**: Construído sobre o framework leve e flexível **Express**.
+- **Documentação Interativa da API**: Interface Swagger UI amigável para teste e exploração de endpoints.
+
+---
 
 ## Tecnologias Utilizadas
 
-- **Node.js**: Runtime JavaScript para construção de aplicações do lado do servidor.
-- **Express.js**: Framework de aplicação web para Node.js, usado para lidar com requisições HTTP e roteamento.
-- **TypeScript**: Superset do JavaScript que adiciona tipos estáticos para maior escalabilidade e manutenibilidade.
-- **express-zod-api**: Biblioteca poderosa que combina Express com Zod para roteamento e validação de API, com suporte integrado ao Swagger.
-- **Swagger/OpenAPI**: Especificação e ferramentas para descrever, produzir e consumir APIs RESTful.
-- **Zod**: Validação de esquemas baseada em TypeScript com inferência estática de tipos.
+- **Node.js**: Runtime JavaScript para aplicações backend.
+- **Express.js**: Framework web minimalista para Node.js.
+- **TypeScript**: Superset do JavaScript que adiciona tipos estáticos.
+- **swagger-jsdoc**: Gera automaticamente a especificação Swagger a partir de comentários JSDoc.
+- **swagger-ui-express**: Integração da UI interativa do Swagger no Express.
+- **Zod** *(opcional)*: Biblioteca de validação de esquemas.
+
+---
 
 ## Primeiros Passos
 
-### Instalação
+### Instalação da biblioteca
 
-1. Clone o repositório:
+1. instale swagger jsdoc:
    ```bash
-   git clone https://github.com/RicardoTavaresDias/EXPRESS-SWAGGER.git
-   cd EXPRESS-SWAGGER
+   npm i swagger-jsdoc swagger-ui-express
+   ````
+
+2. Instale as depedencias typescript :
+
+   ```bash
+   npm i @types/swagger-jsdoc @types/swagger-ui-express
    ```
 
-2. Instale as dependências:
-   ```bash
-   npm install
-   # ou
-   yarn install
+3. Configuração tsconfig.json
+
+   ```ts
+      {
+      "compilerOptions": {
+         "target": "ES2022",
+         "lib": ["ES2023"],
+         "paths": {
+            "@/*": ["./src/*"]
+         },
+         "module": "commonjs",
+         "esModuleInterop": true,
+         "forceConsistentCasingInFileNames": true,
+         "strict": true,
+         "skipLibCheck": true,
+         "resolveJsonModule": true //swagger
+      }
    ```
 
-3. Configure as variáveis de ambiente:
-   Crie um arquivo `.env` no diretório raiz e adicione as configurações necessárias (ex.: número da porta, chaves de API, se aplicável). Consulte o exemplo `.env.example` (se fornecido) ou use as configurações padrão.
+4. Realizar configuração swagger config na pasta src/config/swagger.config.ts:
 
-4. Compile o projeto:
-   ```bash
-   npm run build
+   `````ts
+      import swaggerJsDoc from "swagger-jsdoc";
+      import swaggerUi from "swagger-ui-express";
+      import { Express } from "express";
+
+      const options: swaggerJsDoc.Options = {
+      definition: {
+         openapi: "3.0.0",
+         info: {
+            title: "Swagger Express",
+            version: "1.0.0",
+            description: "Documentação da API usando Swagger, Express e TypeScript",
+         },
+         servers: [
+            {
+            url: "http://localhost:3333",
+            },
+         ],
+         components: {
+            securitySchemes: {
+            bearerAuth: {
+               type: "http",
+               scheme: "bearer",
+               bearerFormat: "JWT",
+            }
+            }
+         },
+         paths: {}, // aqui você pode adicionar manualmente ou gerar com JSDoc
+      },
+      apis: ["./src/controller/*.ts"], 
+      };
+
+      const swaggerSpec = swaggerJsDoc(options);
+
+      export function setupSwagger(app: Express) {
+      app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+      }
+   `````
+
+5. Configurar no servidor arquivo app.ts:
+
+   ```ts
+      import express from "express";
+      import cors from "cors"
+      import { router } from "./routers";
+      import { setupSwagger } from "@/config/swagger.config";
+
+      const app = express()
+
+      app.use(express.json())
+      app.use(cors())
+      app.use(router)
+
+      // Swagger
+      setupSwagger(app);
+
+      export { app }
+   ```
+6. Exemplo de definição de rota com documentação no controller:
+
+    ```ts
+   /**
+    * @swagger
+    * /users:
+    *   get:
+    *     summary: Lista todos os usuários
+    *     tags: [Users]
+    *     responses:
+    *       200:
+    *         description: Lista de usuários retornada com sucesso
+    *         content:
+    *           application/json:
+    *             schema:
+    *               type: array
+    *               items:
+    *                 type: object
+    *                 properties:
+    *                   id:
+    *                     type: string
+    *                     example: "123e4567-e89b-12d3-a456-426614174000"
+    *                   name:
+    *                     type: string
+    *                     example: "João Silva"
+    *                   email:
+    *                     type: string
+    *                     example: "joao@email.com"
+    */
+
+      index (request: Request, response: Response) {
+         const result = getUsersService()
+
+         response.status(200).json(result)
+      }
+
    ```
 
-5. Inicie a aplicação:
-   ```bash
-   npm start
-   ```
+---
 
 ### Uso
 
-Depois que o servidor estiver em execução (porta padrão: 3000), você pode acessar a Swagger UI em:
+Após iniciar o servidor (porta padrão: **3000**), acesse a documentação Swagger em:
+
 ```
-http://localhost:3000/docs
+http://localhost:3333/docs
 ```
 
-- Explore a documentação da API gerada automaticamente.
-- Teste os endpoints diretamente na Swagger UI enviando requisições com dados de exemplo.
-- A integração com `express-zod-api` garante que todos os endpoints sejam validados contra os esquemas Zod definidos, com erros refletidos na saída do Swagger.
+Lá você pode:
 
-### Exemplo de Endpoint
+* Explorar os endpoints da API.
+* Testar requisições diretamente pela Swagger UI.
+* Conferir exemplos de entradas e respostas esperadas.
 
-Suponha que um endpoint simples `/users` esteja definido. A Swagger UI exibirá:
-
-- **GET /users**: Recupera uma lista de todos os usuários.
-- **GET /users/:id**: Recupera os detalhes de um usuário específico com base no ID fornecido.
-- **POST /users**: Cria um novo usuário com um payload validado (ex.: `name: string`, `email: string`).
-
-Corpo de exemplo para POST `/users`:
-```json
-{
-  "name": "João Silva",
-  "email": "joao.silva@example.com"
-}
-```
+---
 
 ## Estrutura do Projeto
 
 ```
 EXPRESS-SWAGGER/
 ├── src/
-│   ├── config/           # Arquivos de configuração (ex.: configurações de ambiente)
+│   ├── config/           # Arquivos de configuração
 │   ├── controller/       # Controladores da API
-│   ├── database/         # Banco de dados memória
-│   ├── docs/             # Documentação, Swagger
-│   ├── middlewares/      # Middlewares personalizados para a aplicação
-│   ├── repositories/     # Camada de acesso a dados
-│   ├── routes/           # Definições de rotas da API
-│   ├── schemas/          # Esquemas Zod para validação
-│   ├── services/         # Camada de serviços/lógica de negócios
-│   ├── app.ts            # Configuração principal da aplicação
-│   └── server.ts         # Configuração do servidor
+│   ├── database/         # Banco de dados em memória
+│   ├── docs/             # Configuração e documentação Swagger
+│   ├── middlewares/      # Middlewares personalizados
+│   ├── repositories/     # Acesso a dados
+│   ├── routes/           # Rotas da API
+│   ├── schemas/          # Schemas de validação (Zod, opcional)
+│   ├── services/         # Lógica de negócios
+│   ├── app.ts            # Configuração principal
+│   └── server.ts         # Inicialização do servidor
 └── .env                  # Variáveis de ambiente
 ```
 
+---
+
 ## Contribuindo
 
-Contribuições são bem-vindas! Para contribuir:
+Contribuições são bem-vindas!
 
 1. Faça um fork do repositório.
-2. Crie uma nova branch (`git checkout -b feature-branch`).
-3. Faça suas alterações e commit (`git commit -m "Adiciona nova funcionalidade"`).
-4. Envie para a branch (`git push origin feature-branch`).
-5. Abra um Pull Request com uma descrição detalhada de suas alterações.
+2. Crie uma branch (`git checkout -b minha-feature`).
+3. Faça suas alterações e commit (`git commit -m "Minha nova feature"`).
+4. Envie para seu fork (`git push origin minha-feature`).
+5. Abra um Pull Request.
 
-Certifique-se de que seu código segue os padrões de TypeScript e linting do projeto.
+---
 
 ## Licença
 
-Este projeto é de código aberto e está disponível sob a Licença MIT. Veja o arquivo [LICENSE](LICENSE) para detalhes.
+Este projeto é de código aberto e está disponível sob a [Licença MIT](LICENSE).
+
